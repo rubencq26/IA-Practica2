@@ -73,4 +73,11 @@ public class Nodo {
     }
 
 
+    public boolean equals(Nodo n){
+        if(x == n.getX() && y == n.getY() && valor == n.getValor()){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

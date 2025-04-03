@@ -2,12 +2,13 @@
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
         Laberinto lab = new Laberinto();
-        lab.cargarLaberinto("maze1.txt");
+        lab.cargarLaberinto("maze3.txt");
         BusquedaAnchura ba = new BusquedaAnchura(lab);
+        BusquedaProfundidad bp = new BusquedaProfundidad(lab);
         lab.Pintar();
-        ba.resolverLaberinto(10000000);
+        ba.resolverLaberinto();
+        bp.resolverLaberinto(1000000000);
+
     }
 }
