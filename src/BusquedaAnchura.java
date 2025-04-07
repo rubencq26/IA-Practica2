@@ -7,12 +7,14 @@ public class BusquedaAnchura {
     private Percepcion percepcion;
     private int numNodosExpandidos;
     private Laberinto lab;
+    private int numPuntos;
 
     public BusquedaAnchura(Laberinto laberinto) {
         colaCerrada = new HashSet<>();
         colaAbierta = new LinkedList<>();
         percepcion = new Percepcion(laberinto);
         numNodosExpandidos = 0;
+        numPuntos = 0;
 
         lab = new Laberinto(laberinto.getLaberintoChar());
     }
@@ -70,9 +72,11 @@ public class BusquedaAnchura {
             while (nodo != null) {
                 lab.actualizarPosicion(nodo.getX(), nodo.getY(), '.');
                 nodo = nodo.getPadre();
+                numPuntos++;
             }
             lab.Pintar();
             System.out.println("Número de nodos expandidos: " + numNodosExpandidos);
+            System.out.println("Numero de puntos pintados: " + numPuntos);
         } else {
             System.out.println("Meta no encontrada");
         }

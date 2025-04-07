@@ -3,7 +3,7 @@
 public class Main {
     public static void main(String[] args) {
         Laberinto lab = new Laberinto();
-        lab.cargarLaberinto("maze3.txt");
+        lab.generaLaberinto(30,30,4);
         BusquedaAnchura ba = new BusquedaAnchura(lab);
         BusquedaProfundidad bp = new BusquedaProfundidad(lab);
         lab.Pintar();

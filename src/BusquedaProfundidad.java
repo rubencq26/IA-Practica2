@@ -10,12 +10,15 @@ public class BusquedaProfundidad {
     private HashSet<Nodo> colaCerrada;
     private int numExpansiones;
     private boolean win;
+    private int numPuntos;
 
     public BusquedaProfundidad(Laberinto lab) {
         laberinto = new Laberinto(lab.getLaberintoChar());
         percepcion = new Percepcion(laberinto);
         pilaAbierta = new Stack<>();
         colaCerrada = new HashSet<>();
+        numExpansiones = 0;
+        numPuntos = 0;
     }
 
     public void resolverLaberinto(int maxIteraciones) {
@@ -71,9 +74,11 @@ public class BusquedaProfundidad {
 
                 laberinto.actualizarPosicion(nodo.getX(), nodo.getY(), '.');
                 nodo = nodo.getPadre();
+                numPuntos++;
             }
             laberinto.Pintar();
             System.out.println("Numero de nodos expandidos: " + numExpansiones);
+            System.out.println("Numero de puntos pintados: " + numPuntos);
         }else{
             System.out.println("No se pudo resolver laberinto");
         }
