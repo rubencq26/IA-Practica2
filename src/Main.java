@@ -3,12 +3,16 @@
 public class Main {
     public static void main(String[] args) {
         Laberinto lab = new Laberinto();
-        lab.generaLaberinto(30,30,4);
-        BusquedaAnchura ba = new BusquedaAnchura(lab);
-        BusquedaProfundidad bp = new BusquedaProfundidad(lab);
+        lab.cargarLaberinto("maze3.txt");
         lab.Pintar();
-        ba.resolverLaberinto();
-        bp.resolverLaberinto(1000000000);
+        GreedyBestFirstSearch g = new GreedyBestFirstSearch(lab);
+        g.resolverLaberinto(0);
+        g = new GreedyBestFirstSearch(lab);
+        g.resolverLaberinto(1);
+        g = new GreedyBestFirstSearch(lab);
+        g.resolverLaberinto(2);
+
+
 
     }
 }

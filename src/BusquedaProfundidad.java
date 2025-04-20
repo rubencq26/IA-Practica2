@@ -45,10 +45,7 @@ public class BusquedaProfundidad {
 
                 if(map.get(key) != '#'){
                     switch (key){
-                        case 0 -> y--;
-                        case 1 -> x--;
-                        case 2 -> y++;
-                        case 3 -> x++;
+
                     }
                 }
                 Nodo nuevo = new Nodo(nodo, x, y, map.get(key));

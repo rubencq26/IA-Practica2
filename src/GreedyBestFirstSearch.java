@@ -10,8 +10,10 @@ public class GreedyBestFirstSearch {
     Percepcion percepcion;
     int [] salida;
 
+
     public GreedyBestFirstSearch(Laberinto lab) {
         abiertos = new LinkedList<>();
+        cerrados = new ArrayList<>();
         this.lab = new Laberinto(lab.getLaberintoChar());
         numNodosExpandidos = 0;
         numPuntosPintados = 0;
@@ -19,32 +21,49 @@ public class GreedyBestFirstSearch {
         percepcion = new Percepcion(lab);
     }
 
-    private void ordenarCola(){
+    private void ordenarCola() {
         ArrayList<NodoHeuristico> aux = new ArrayList<>();
-        int pos = 0;
-        while(!abiertos.isEmpty()){
+
+        // Vaciar la cola en la lista auxiliar
+        while (!abiertos.isEmpty()) {
             aux.add(abiertos.poll());
         }
 
-        for(int i = 0; i < aux.size(); i++){
-            for(int j = 0; j < aux.size(); j++){
-                if(aux.get(pos).getHeuristica() > aux.get(j).getHeuristica()){
-                    pos = j;
+        // Ordenar manualmente (tipo selección)
+        while (!aux.isEmpty()) {
+            int posMin = 0;
+            for (int i = 1; i < aux.size(); i++) {
+                if (aux.get(i).getHeuristica() < aux.get(posMin).getHeuristica()) {
+                    posMin = i;
                 }
             }
-            abiertos.add(aux.get(pos));
-            aux.remove(pos);
+            // Añadir el menor a la cola y eliminarlo de la lista
+            abiertos.add(aux.get(posMin));
+            aux.remove(posMin);
         }
     }
 
     public void resolverLaberinto(int heur){
+        Laberinto laberinto = new Laberinto(lab.getLaberintoChar());
+        if(heur ==3){
+            FlowMap flowMap = new FlowMap(lab);
+            int [][] fmap = flowMap.getFlowMap();
+            char [][] laberintoChar = new char[lab.getAlto()][lab.getAncho()];
+
+            for(int i =0; i < lab.getAlto(); i++){
+                for(int j =0; j < lab.getAncho(); j++){
+                    laberintoChar[i][j] = (char) fmap[i][j];
+                }
+            }
+            laberinto.actualizarLaberinto(laberintoChar);
+        }
 
         NodoHeuristico nodo = new NodoHeuristico(null,1,1, 'E');
-        nodo.generarHeuristica(heur, salida);
+        nodo.generarHeuristica(heur, salida,laberinto);
         abiertos.add(nodo);
 
         while(!abiertos.isEmpty() && nodo.getValor() != 'S'){
-            abiertos.poll();
+            nodo = abiertos.poll();
             cerrados.add(nodo);
             HashMap<Integer,Character> map = percepcion.percibir(nodo.getX(), nodo.getY());
             for(Integer key : map.keySet()) {
@@ -58,17 +77,30 @@ public class GreedyBestFirstSearch {
                         case 2 -> y++;
                         case 3 -> x++;
                     }
+                    NodoHeuristico hijo = new NodoHeuristico(nodo,x,y,map.get(key));
+                    hijo.generarHeuristica(heur, salida,laberinto);
+                    if(!cerrados.contains(hijo)){
+                        abiertos.add(hijo);
+                        numNodosExpandidos++;
+                    }
                 }
-                NodoHeuristico hijo = new NodoHeuristico(nodo,x,y,map.get(key));
-                hijo.generarHeuristica(heur, salida);
-                if(!cerrados.contains(hijo)){
-                    abiertos.add(hijo);
-                    numNodosExpandidos++;
-                }
+            }
+            ordenarCola();
 
-                ordenarCola();
-
-         }
+        }
+        if(nodo.getValor() == 'S'){
+            nodo = nodo.getPadre();
+            while(nodo != null){
+                lab.actualizarPosicion(nodo.getX(), nodo.getY(), '.');
+                numPuntosPintados++;
+                nodo = nodo.getPadre();
+            }
+            lab.Pintar();
+            System.out.println("Número de nodos expandidos: " + numNodosExpandidos);
+            System.out.println("Numero de puntos pintados: " + numPuntosPintados);
+        }else{
+            System.out.println("No se ha encontrado la solucion ");
+            System.out.println("Num nodos expandidos: " + numNodosExpandidos);
         }
     }
 }
