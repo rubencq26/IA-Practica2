@@ -5,12 +5,23 @@ public class Main {
         Laberinto lab = new Laberinto();
         lab.cargarLaberinto("maze3.txt");
         lab.Pintar();
-        GreedyBestFirstSearch g = new GreedyBestFirstSearch(lab);
-        g.resolverLaberinto(0);
-        g = new GreedyBestFirstSearch(lab);
-        g.resolverLaberinto(1);
-        g = new GreedyBestFirstSearch(lab);
-        g.resolverLaberinto(2);
+        Astar a = new Astar(lab);
+        a.resolverLaberinto(0, true);
+        a = new Astar(lab);
+        a.resolverLaberinto(2, true);
+        a = new Astar(lab);
+        a.resolverLaberinto(1, true);
+        a = new Astar(lab);
+        a.resolverLaberinto(4, true);
+        a = new Astar(lab);
+        a.resolverLaberinto(0, false);
+        a = new Astar(lab);
+        a.resolverLaberinto(2, false);
+        a = new Astar(lab);
+        a.resolverLaberinto(1, false);
+        a = new Astar(lab);
+        a.resolverLaberinto(4, false);
+        a = new Astar(lab);
 
 
 

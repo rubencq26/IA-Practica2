@@ -28,7 +28,7 @@ public class NodoHeuristico{
         this.coste = coste;
     }
 
-    public void generarHeuristica(int tipo, int [] salida, Laberinto labe) {
+    public void generarHeuristica(int tipo, int [] salida, Laberinto labe, boolean activo) {
         //0 Distancia a manhattan
         //1 Distancia Euclidea
         switch (tipo) {
@@ -63,6 +63,17 @@ public class NodoHeuristico{
                 char [][] laberin = labe.getLaberintoChar();
                 heuristica = (int) laberin[x][y];
                 break;
+            case 4:
+                heuristica = (Math.sqrt(Math.pow(salida[0] - getX(),2) + Math.pow(salida[1] - getY(),2))) + (salida[0] - getX()) + (salida[1] - getY());
+                break;
+        }
+
+        if (activo) {
+            if(getPadre().getX() == x - 1){
+                heuristica += 2;
+            }else if(getPadre().getY() == y - 1){
+                heuristica += 3;
+            }
         }
     }
 

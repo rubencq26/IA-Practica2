@@ -59,7 +59,7 @@ public class GreedyBestFirstSearch {
         }
 
         NodoHeuristico nodo = new NodoHeuristico(null,1,1, 'E');
-        nodo.generarHeuristica(heur, salida,laberinto);
+        nodo.generarHeuristica(heur, salida,laberinto, false);
         abiertos.add(nodo);
 
         while(!abiertos.isEmpty() && nodo.getValor() != 'S'){
@@ -78,7 +78,7 @@ public class GreedyBestFirstSearch {
                         case 3 -> x++;
                     }
                     NodoHeuristico hijo = new NodoHeuristico(nodo,x,y,map.get(key));
-                    hijo.generarHeuristica(heur, salida,laberinto);
+                    hijo.generarHeuristica(heur, salida,laberinto, false);
                     if(!cerrados.contains(hijo)){
                         abiertos.add(hijo);
                         numNodosExpandidos++;
