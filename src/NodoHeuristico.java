@@ -69,10 +69,12 @@ public class NodoHeuristico{
         }
 
         if (activo) {
-            if(getPadre().getX() == x - 1){
-                heuristica += 2;
-            }else if(getPadre().getY() == y - 1){
-                heuristica += 3;
+            if(getPadre() != null) {
+                if (getPadre().getX() == x - 1) {
+                    heuristica += 2;
+                } else if (getPadre().getY() == y - 1) {
+                    heuristica += 3;
+                }
             }
         }
     }
