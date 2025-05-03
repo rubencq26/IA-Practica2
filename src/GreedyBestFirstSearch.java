@@ -1,15 +1,15 @@
-import javax.print.attribute.HashPrintJobAttributeSet;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 public class GreedyBestFirstSearch {
-    private Queue<NodoHeuristico> abiertos;
+    private LinkedList<NodoHeuristico> abiertos;
     private ArrayList<NodoHeuristico> cerrados;
     private Laberinto lab;
     private int numNodosExpandidos;
     private int numPuntosPintados;
     Percepcion percepcion;
-    int [] salida;
-
+    int[] salida;
 
     public GreedyBestFirstSearch(Laberinto lab) {
         abiertos = new LinkedList<>();
@@ -21,86 +21,73 @@ public class GreedyBestFirstSearch {
         percepcion = new Percepcion(lab);
     }
 
-    private void ordenarCola() {
-        ArrayList<NodoHeuristico> aux = new ArrayList<>();
-
-        // Vaciar la cola en la lista auxiliar
-        while (!abiertos.isEmpty()) {
-            aux.add(abiertos.poll());
-        }
-
-        // Ordenar manualmente (tipo selección)
-        while (!aux.isEmpty()) {
-            int posMin = 0;
-            for (int i = 1; i < aux.size(); i++) {
-                if (aux.get(i).getHeuristica() < aux.get(posMin).getHeuristica()) {
-                    posMin = i;
-                }
+    private void insertarOrdenado(NodoHeuristico nodo) {
+        double f = nodo.getHeuristica();
+        int i = 0;
+        while ( i < abiertos.size()) {
+            NodoHeuristico actual = abiertos.get(i);
+            double factual = actual.getHeuristica();
+            if(f <= factual) {
+                break;
             }
-            // Añadir el menor a la cola y eliminarlo de la lista
-            abiertos.add(aux.get(posMin));
-            aux.remove(posMin);
+            i++;
         }
+        abiertos.add(i, nodo);
     }
 
-    public void resolverLaberinto(int heur){
-        Laberinto laberinto = new Laberinto(lab.getLaberintoChar());
-        if(heur ==3){
-            FlowMap flowMap = new FlowMap(lab);
-            int [][] fmap = flowMap.getFlowMap();
-            char [][] laberintoChar = new char[lab.getAlto()][lab.getAncho()];
+    public void resolverLaberinto(int heur, boolean activo) {
+        NodoHeuristico nodoInicial = new NodoHeuristico(null, 1, 1, 'E', 0);
+        nodoInicial.generarHeuristica(heur, salida, lab, activo);
+        insertarOrdenado(nodoInicial);
 
-            for(int i =0; i < lab.getAlto(); i++){
-                for(int j =0; j < lab.getAncho(); j++){
-                    laberintoChar[i][j] = (char) fmap[i][j];
+        while (!abiertos.isEmpty()) {
+            NodoHeuristico nodo = abiertos.removeFirst();
+
+
+            if (nodo.getValor() == 'S') {
+                // Se encontró la salida
+                NodoHeuristico camino = nodo.getPadre();
+                while (camino != null && camino.getValor() != 'E') {
+                    lab.actualizarPosicion(camino.getX(), camino.getY(), '.');
+                    numPuntosPintados++;
+                    camino = camino.getPadre();
                 }
+                lab.Pintar();
+                System.out.println("Número de nodos expandidos: " + numNodosExpandidos);
+                System.out.println("Numero de puntos pintados: " + numPuntosPintados);
+                return;
             }
-            laberinto.actualizarLaberinto(laberintoChar);
-        }
 
-        NodoHeuristico nodo = new NodoHeuristico(null,1,1, 'E');
-        nodo.generarHeuristica(heur, salida,laberinto, false);
-        abiertos.add(nodo);
-
-        while(!abiertos.isEmpty() && nodo.getValor() != 'S'){
-            nodo = abiertos.poll();
             cerrados.add(nodo);
-            HashMap<Integer,Character> map = percepcion.percibir(nodo.getX(), nodo.getY());
-            for(Integer key : map.keySet()) {
+
+            HashMap<Integer, Character> map = percepcion.percibir(nodo.getX(), nodo.getY());
+            for (Integer key : map.keySet()) {
                 int x = nodo.getX();
                 int y = nodo.getY();
 
-                if(map.get(key) != '#'){
-                    switch (key){
-                        case 0 -> y--;
-                        case 1 -> x--;
-                        case 2 -> y++;
-                        case 3 -> x++;
-                    }
-                    NodoHeuristico hijo = new NodoHeuristico(nodo,x,y,map.get(key));
-                    hijo.generarHeuristica(heur, salida,laberinto, false);
-                    if(!cerrados.contains(hijo)){
-                        abiertos.add(hijo);
+                switch (key) {
+                    case 0 -> y--;
+                    case 1 -> x--;
+                    case 2 -> y++;
+                    case 3 -> x++;
+                }
+
+                if (map.get(key) != '#') {
+                    NodoHeuristico hijo = new NodoHeuristico(nodo, x, y, map.get(key), nodo.getCoste() + 1);
+                    hijo.generarHeuristica(heur, salida, lab, activo);
+                    if (!cerrados.contains(hijo) && !abiertos.contains(hijo)) {
+                        insertarOrdenado(hijo);
                         numNodosExpandidos++;
                     }
                 }
             }
-            ordenarCola();
+        }
+
+        System.out.println("No se ha encontrado la solucion ");
+        System.out.println("Num nodos expandidos: " + numNodosExpandidos);
 
         }
-        if(nodo.getValor() == 'S'){
-            nodo = nodo.getPadre();
-            while(nodo != null){
-                lab.actualizarPosicion(nodo.getX(), nodo.getY(), '.');
-                numPuntosPintados++;
-                nodo = nodo.getPadre();
-            }
-            lab.Pintar();
-            System.out.println("Número de nodos expandidos: " + numNodosExpandidos);
-            System.out.println("Numero de puntos pintados: " + numPuntosPintados);
-        }else{
-            System.out.println("No se ha encontrado la solucion ");
-            System.out.println("Num nodos expandidos: " + numNodosExpandidos);
-        }
     }
-}
+
+
+

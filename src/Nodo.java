@@ -5,6 +5,7 @@ public class Nodo {
     private ArrayList<Nodo> Hijos;
     private int x, y;
     private char valor;
+    private int iteracion;
 
     public Nodo(Nodo p, int x, int y, char valor) {
         Padre = p;
@@ -12,6 +13,11 @@ public class Nodo {
         this.x = x;
         this.y = y;
         this.valor = valor;
+        if(Padre != null) {
+            iteracion = Padre.iteracion + 1;
+        }else{
+            iteracion = 0;
+        }
     }
 
     public Nodo getPadre() {
@@ -65,6 +71,11 @@ public class Nodo {
         this.valor = valor;
     }
 
+    public int getIteracion() {
+        return iteracion;
+    }
+
+
     public int[] getPosicion(){
         int[] posicion = new int[2];
         posicion[0] = x;
@@ -73,11 +84,16 @@ public class Nodo {
     }
 
 
-    public boolean equals(Nodo n){
-        if(x == n.getX() && y == n.getY() && valor == n.getValor()){
-            return true;
-        }else{
-            return false;
-        }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Nodo n = (Nodo) obj;
+        return this.x == n.getX() && this.y == n.getY() && this.valor == n.getValor();
     }
+
+
 }
+
+

@@ -1,8 +1,6 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Stack;
+import java.util.*;
 
-public class BusquedaProfundidad {
+public class BusquedaLimite {
     private Percepcion percepcion;
     private Laberinto lab;
     private Stack<Nodo> abierto;
@@ -10,14 +8,14 @@ public class BusquedaProfundidad {
     private int numNodosExpandidos;
     private int numPuntos;
 
-    public BusquedaProfundidad(Laberinto lab) {
+    public BusquedaLimite(Laberinto lab) {
         this.lab = new Laberinto(lab.getLaberintoChar());
         percepcion = new Percepcion(lab);
         numNodosExpandidos = 0;
         numPuntos = 0;
     }
 
-    public void resolverLaberinto() {
+    public void resolverLaberinto(int maxIteraciones) {
         Nodo nodoInicial = new Nodo(null, 1, 1, 'E');
         abierto = new Stack<>();
         cerrado = new ArrayList<>();
@@ -60,10 +58,11 @@ public class BusquedaProfundidad {
                 // Si no es pared
                 if (valor != '#') {
                     Nodo hijo = new Nodo(actual, x, y, valor);
+                    if (hijo.getIteracion() < maxIteraciones) {
                         if (!cerrado.contains(hijo) && !abierto.contains(hijo)) {
                             abierto.push(hijo);
                         }
-
+                    }
                 }
             }
         }

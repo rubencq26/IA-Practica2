@@ -33,10 +33,10 @@ public class NodoHeuristico{
         //1 Distancia Euclidea
         switch (tipo) {
             case 0:
-                heuristica = (salida[0] - getX()) + (salida[1] - getY());
+                heuristica = Math.abs(salida[0] - getX()) + Math.abs(salida[1] - getY());
                 break;
             case 1:
-                heuristica = (Math.sqrt(Math.pow(salida[0] - getX(),2) + Math.pow(salida[1] - getY(),2)));
+                heuristica = (Math.sqrt(Math.pow(Math.abs(salida[0] - getX()),2) + Math.pow(Math.abs(salida[1] - getY()),2)));
                 break;
             case 2:
                 HashMap <Integer, Character> mapa = new HashMap();
@@ -60,10 +60,6 @@ public class NodoHeuristico{
                 heuristica =  (salida[0] - getX()) + (salida[1] - getY()) + numObstaculos;
                 break;
             case 3:
-                char [][] laberin = labe.getLaberintoChar();
-                heuristica = (int) laberin[x][y];
-                break;
-            case 4:
                 heuristica = (Math.sqrt(Math.pow(salida[0] - getX(),2) + Math.pow(salida[1] - getY(),2))) + (salida[0] - getX()) + (salida[1] - getY());
                 break;
         }

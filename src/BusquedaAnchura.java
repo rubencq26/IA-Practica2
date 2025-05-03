@@ -2,7 +2,7 @@ import java.util.*;
 
 
 public class BusquedaAnchura {
-    private HashSet<Nodo> colaCerrada;
+    private ArrayList<Nodo> colaCerrada;
     private Queue<Nodo> colaAbierta;
     private Percepcion percepcion;
     private int numNodosExpandidos;
@@ -10,8 +10,7 @@ public class BusquedaAnchura {
     private int numPuntos;
 
     public BusquedaAnchura(Laberinto laberinto) {
-        colaCerrada = new HashSet<>();
-        colaAbierta = new LinkedList<>();
+
         percepcion = new Percepcion(laberinto);
         numNodosExpandidos = 0;
         numPuntos = 0;
@@ -20,66 +19,54 @@ public class BusquedaAnchura {
     }
 
     public void resolverLaberinto() {
-        Queue<Nodo> colaAbierta = new LinkedList<>();
-        Set<Nodo> colaCerrada = new HashSet<>();
+       colaCerrada = new ArrayList<>();
+       colaAbierta = new LinkedList<>();
 
         Nodo nodo = new Nodo(null, 1, 1, 'E');
         colaAbierta.add(nodo);
-        colaCerrada.add(nodo);
-
-        boolean win = false;
 
         while (!colaAbierta.isEmpty()) {
-            nodo = colaAbierta.poll();
+            Nodo actual = colaAbierta.poll();
 
-            if (nodo.getValor() == 'S') {
-                win = true;
-                break;
+            if (actual.getValor() == 'S') {
+                Nodo camino = actual.getPadre();
+                while (camino != null && camino.getValor() != 'E') {
+                    lab.actualizarPosicion(camino.getX(), camino.getY(), '.');
+                    numPuntos++;
+                    camino = camino.getPadre();
+                }
+                lab.Pintar();
+                System.out.println("Número de nodos expandidos: " + numNodosExpandidos);
+                System.out.println("Numero de puntos pintados: " + numPuntos);
+                return;
             }
+            colaCerrada.add(actual);
 
-            HashMap<Integer, Character> map = percepcion.percibir(nodo.getX(), nodo.getY());
+            HashMap<Integer, Character> map = percepcion.percibir(actual.getX(), actual.getY());
 
-            for (Integer i : map.keySet()) {
-                int x = nodo.getX();
-                int y = nodo.getY();
+            for (Integer key : map.keySet()) {
+                int x = actual.getX();
+                int y = actual.getY();
+                switch (key) {
+                    case 0 -> y--; // Arriba
+                    case 1 -> x--; // Izquierda
+                    case 2 -> y++; // Abajo
+                    case 3 -> x++; // Derecha
+                }
 
-                if (map.get(i) != '#') {  // Verificar que no sea pared
-                    switch (i) {
-                        case 0 -> y--; // Arriba
-                        case 1 -> x--; // Izquierda
-                        case 2 -> y++; // Abajo
-                        case 3 -> x++; // Derecha
-                    }
-
-                    Nodo nuevoNodo = new Nodo(nodo, x, y, map.get(i));
-                    boolean encontrado = false;
-                    for(Nodo n : colaCerrada) {
-                        if(n.equals(nuevoNodo)) {
-                            encontrado = true;
-                        }
-                    }
-                    if (!encontrado) {
-                        colaCerrada.add(nuevoNodo);
-                        colaAbierta.add(nuevoNodo);
+                if (map.get(key) != '#') {  // Verificar que no sea pared
+                    Nodo hijo = new Nodo(actual, x, y, map.get(key));
+                    if(!colaCerrada.contains(hijo) && !colaAbierta.contains(hijo)) {
+                        colaAbierta.add(hijo);
                         numNodosExpandidos++;
                     }
                 }
             }
         }
 
-        if (win) {
-            nodo = nodo.getPadre();
-            while (nodo != null) {
-                lab.actualizarPosicion(nodo.getX(), nodo.getY(), '.');
-                nodo = nodo.getPadre();
-                numPuntos++;
-            }
-            lab.Pintar();
-            System.out.println("Número de nodos expandidos: " + numNodosExpandidos);
-            System.out.println("Numero de puntos pintados: " + numPuntos);
-        } else {
-            System.out.println("Meta no encontrada");
-        }
+        System.out.println("No se ha encontrado la solución");
+        System.out.println("Numero de nodos expandidos: " + numNodosExpandidos);
+
     }
 
 }

@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Astar {
-    private Queue<NodoHeuristico> abiertos;
+    private LinkedList<NodoHeuristico> abiertos;
     private ArrayList<NodoHeuristico> cerrados;
     private Laberinto lab;
     private int numNodosExpandidos;
@@ -22,28 +22,43 @@ public class Astar {
         percepcion = new Percepcion(lab);
     }
 
-    private void ordenarCola() {
-        ArrayList<NodoHeuristico> aux = new ArrayList<>();
-        while (!abiertos.isEmpty()) {
-            aux.add(abiertos.poll());
-        }
-        while (!aux.isEmpty()) {
-            int posMin = 0;
-            for (int i = 0; i < aux.size(); i++) {
-                if ((aux.get(i).getHeuristica() + aux.get(i).getCoste()) < (aux.get(posMin).getHeuristica() + aux.get(posMin).getCoste())) {
-                    posMin = i;
-                }
-                abiertos.add(aux.get(posMin));
-                aux.remove(posMin);
+    private void insertarOrdenado(NodoHeuristico nodo) {
+        double f = nodo.getCoste() + nodo.getHeuristica();
+        int i = 0;
+        while ( i < abiertos.size()) {
+            NodoHeuristico actual = abiertos.get(i);
+            double factual = actual.getCoste() + actual.getHeuristica();
+            if(f <= factual) {
+                break;
             }
+            i++;
         }
+        abiertos.add(i, nodo);
     }
 
     public void resolverLaberinto(int heur, boolean activo) {
-        NodoHeuristico nodo = new NodoHeuristico(null, 1, 1, 'E', 0);
-        abiertos.add(nodo);
-        while (nodo.getValor() != 'S' && !abiertos.isEmpty()) {
-            nodo = abiertos.poll();
+        NodoHeuristico nodoInicial = new NodoHeuristico(null, 1, 1, 'E', 0);
+        nodoInicial.generarHeuristica(heur, salida, lab, activo);
+        insertarOrdenado(nodoInicial);
+
+        while (!abiertos.isEmpty()) {
+            NodoHeuristico nodo = abiertos.removeFirst();
+
+
+            if (nodo.getValor() == 'S') {
+                // Se encontró la salida
+                NodoHeuristico camino = nodo.getPadre();
+                while (camino != null && camino.getValor() != 'E') {
+                    lab.actualizarPosicion(camino.getX(), camino.getY(), '.');
+                    numPuntosPintados++;
+                    camino = camino.getPadre();
+                }
+                lab.Pintar();
+                System.out.println("Número de nodos expandidos: " + numNodosExpandidos);
+                System.out.println("Numero de puntos pintados: " + numPuntosPintados);
+                return;
+            }
+
             cerrados.add(nodo);
 
             HashMap<Integer, Character> map = percepcion.percibir(nodo.getX(), nodo.getY());
@@ -51,37 +66,27 @@ public class Astar {
                 int x = nodo.getX();
                 int y = nodo.getY();
 
+                switch (key) {
+                    case 0 -> y--;
+                    case 1 -> x--;
+                    case 2 -> y++;
+                    case 3 -> x++;
+                }
+
                 if (map.get(key) != '#') {
-                    switch (key) {
-                        case 0 -> y--;
-                        case 1 -> x--;
-                        case 2 -> y++;
-                        case 3 -> x++;
-                    }
                     NodoHeuristico hijo = new NodoHeuristico(nodo, x, y, map.get(key), nodo.getCoste() + 1);
                     hijo.generarHeuristica(heur, salida, lab, activo);
-                    if (!cerrados.contains(hijo)) {
-                        abiertos.add(hijo);
+                    if (!cerrados.contains(hijo) && !abiertos.contains(hijo)) {
+                        insertarOrdenado(hijo);
                         numNodosExpandidos++;
                     }
                 }
             }
-            ordenarCola();
         }
-            if (nodo.getValor() == 'S') {
-                nodo = nodo.getPadre();
-                while (nodo != null) {
-                    lab.actualizarPosicion(nodo.getX(), nodo.getY(), '.');
-                    numPuntosPintados++;
-                    nodo = nodo.getPadre();
-                }
-                lab.Pintar();
-                System.out.println("Número de nodos expandidos: " + numNodosExpandidos);
-                System.out.println("Numero de puntos pintados: " + numPuntosPintados);
-            } else {
-                System.out.println("No se ha encontrado la solucion ");
-                System.out.println("Num nodos expandidos: " + numNodosExpandidos);
-            }
+
+        System.out.println("No se ha encontrado la solucion ");
+        System.out.println("Num nodos expandidos: " + numNodosExpandidos);
+
         }
     }
 

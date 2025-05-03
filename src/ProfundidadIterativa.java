@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
-public class BusquedaProfundidad {
+public class ProfundidadIterativa {
     private Percepcion percepcion;
     private Laberinto lab;
     private Stack<Nodo> abierto;
@@ -10,14 +10,29 @@ public class BusquedaProfundidad {
     private int numNodosExpandidos;
     private int numPuntos;
 
-    public BusquedaProfundidad(Laberinto lab) {
+    public ProfundidadIterativa(Laberinto lab) {
         this.lab = new Laberinto(lab.getLaberintoChar());
         percepcion = new Percepcion(lab);
         numNodosExpandidos = 0;
         numPuntos = 0;
     }
 
-    public void resolverLaberinto() {
+    public void resolverLaberinto(){
+        int limite = lab.getAlto() * lab.getAlto();
+
+        for(int i = 1 ; i <= limite ; i++){
+            if(resolverConLimite(i)){
+                return;
+            }
+        }
+        System.out.println("No se ha encontrado solución.");
+        System.out.println("Número de nodos expandidos: " + numNodosExpandidos);
+
+
+
+    }
+
+    public boolean resolverConLimite(int Limite) {
         Nodo nodoInicial = new Nodo(null, 1, 1, 'E');
         abierto = new Stack<>();
         cerrado = new ArrayList<>();
@@ -37,7 +52,7 @@ public class BusquedaProfundidad {
                 lab.Pintar();
                 System.out.println("Número de nodos expandidos: " + numNodosExpandidos);
                 System.out.println("Número de puntos pintados: " + numPuntos);
-                return;
+                return true;
             }
 
             cerrado.add(actual);
@@ -60,16 +75,16 @@ public class BusquedaProfundidad {
                 // Si no es pared
                 if (valor != '#') {
                     Nodo hijo = new Nodo(actual, x, y, valor);
+                    if(hijo.getIteracion() < Limite) {
                         if (!cerrado.contains(hijo) && !abierto.contains(hijo)) {
                             abierto.push(hijo);
                         }
-
+                    }
                 }
             }
         }
+        return false;
 
-        System.out.println("No se ha encontrado solución.");
-        System.out.println("Número de nodos expandidos: " + numNodosExpandidos);
     }
 
 }
