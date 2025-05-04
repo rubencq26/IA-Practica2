@@ -4,15 +4,16 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class BusquedaBidireccional {
-    private ArrayList<Nodo> cerradaInicio;
-    private Queue<Nodo> abiertaInicio;
-    private ArrayList<Nodo> cerradaFinal;
-    private Queue<Nodo> abiertaFinal;
+    private ArrayList<Nodo> cerradaInicio; // Lista Cerrada para Busqueda desde la entrada
+    private Queue<Nodo> abiertaInicio; // Cola abierta para busqueda desde la entrada
+    private ArrayList<Nodo> cerradaFinal; // Lista Cerrada para la busqueda desde la salida
+    private Queue<Nodo> abiertaFinal; //Cola abierta para la busqueda desde la salida
     private Percepcion percepcion;
     private int numNodosExpandidos;
     private Laberinto lab;
     private int numPuntos;
 
+    // Constructor
     public BusquedaBidireccional(Laberinto laberinto) {
         percepcion = new Percepcion(laberinto);
         numNodosExpandidos = 0;
@@ -21,27 +22,27 @@ public class BusquedaBidireccional {
     }
 
     public void resolverLaberinto() {
-        Nodo nodoInicial = new Nodo(null, 1, 1, 'E');
-        Nodo nodoFinal = new Nodo(null, lab.getSalida()[0], lab.getSalida()[1], 'S');
+        Nodo nodoInicial = new Nodo(null, 1, 1, 'E'); // Nodo inicial
+        Nodo nodoFinal = new Nodo(null, lab.getSalida()[0], lab.getSalida()[1], 'S'); // Nodo final
 
         abiertaInicio = new LinkedList<>();
         cerradaInicio = new ArrayList<>();
         cerradaFinal = new ArrayList<>();
         abiertaFinal = new LinkedList<>();
 
-        abiertaInicio.add(nodoInicial);
-        abiertaFinal.add(nodoFinal);
+        abiertaInicio.add(nodoInicial); // Insertar en la cola inicial
+        abiertaFinal.add(nodoFinal); // Insertar en la cola final
 
         while (!abiertaInicio.isEmpty() && !abiertaFinal.isEmpty()) {
-            nodoInicial = abiertaInicio.poll();
-            nodoFinal = abiertaFinal.poll();
+            nodoInicial = abiertaInicio.poll(); // Extraer nodo de la cola inicial
+            nodoFinal = abiertaFinal.poll(); // Extrar nodo de la cola final
 
             cerradaInicio.add(nodoInicial);
             cerradaFinal.add(nodoFinal);
 
             // Buscar intersección
             for (Nodo n1 : cerradaInicio) {
-                if (cerradaFinal.contains(n1)) {
+                if (cerradaFinal.contains(n1)) { // Condicion de victoria
                     Nodo interseccion = n1;
 
                     // Reconstruir camino desde inicio
@@ -65,7 +66,7 @@ public class BusquedaBidireccional {
                         }
                     }
 
-                    numPuntos--; // Quitar intersección repetida
+
                     lab.Pintar();
                     System.out.println("Numero de nodos expandidos: " + numNodosExpandidos);
                     System.out.println("Numero de puntos pintados: " + numPuntos);
@@ -73,14 +74,16 @@ public class BusquedaBidireccional {
                 }
             }
 
-            moverInicio(nodoInicial);
-            moverFinal(nodoFinal);
+            moverInicio(nodoInicial); // Generamos hijos de los dos nodos
+            moverFinal(nodoFinal); // Generamos hijos de los dos nodos
         }
 
+        //  Consecuencia de no encontrar salida
         System.out.println("No se ha encontrado solucion");
         System.out.println("Numero de nodos expandidos: " + numNodosExpandidos);
     }
 
+    // Metodo para generar hijos del nodo Inicial
     public void moverInicio(Nodo actual) {
         HashMap<Integer, Character> map = percepcion.percibir(actual.getX(), actual.getY());
 
@@ -104,6 +107,7 @@ public class BusquedaBidireccional {
         }
     }
 
+    // Metodo para generar hijos del nodo final
     public void moverFinal(Nodo actual) {
         HashMap<Integer, Character> map = percepcion.percibir(actual.getX(), actual.getY());
 

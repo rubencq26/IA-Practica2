@@ -2,8 +2,8 @@ import java.util.*;
 
 
 public class BusquedaAnchura {
-    private ArrayList<Nodo> colaCerrada;
-    private Queue<Nodo> colaAbierta;
+    private ArrayList<Nodo> colaCerrada; // Lista de nodos Cerrados
+    private Queue<Nodo> colaAbierta; // Cola de nodos abiertos
     private Percepcion percepcion;
     private int numNodosExpandidos;
     private Laberinto lab;
@@ -20,17 +20,17 @@ public class BusquedaAnchura {
 
     public void resolverLaberinto() {
        colaCerrada = new ArrayList<>();
-       colaAbierta = new LinkedList<>();
+       colaAbierta = new LinkedList<>(); // En java no existen las colas como tal y derivan de una Linked List
 
-        Nodo nodo = new Nodo(null, 1, 1, 'E');
+        Nodo nodo = new Nodo(null, 1, 1, 'E'); //Nodo Inicial
         colaAbierta.add(nodo);
 
         while (!colaAbierta.isEmpty()) {
-            Nodo actual = colaAbierta.poll();
+            Nodo actual = colaAbierta.poll(); // Extraemos el primer nodo de la cola
 
-            if (actual.getValor() == 'S') {
+            if (actual.getValor() == 'S') { // Condición de victoria
                 Nodo camino = actual.getPadre();
-                while (camino != null && camino.getValor() != 'E') {
+                while (camino != null && camino.getValor() != 'E') { //Bucle para actualizar laberinto y pintar el camino encontrado
                     lab.actualizarPosicion(camino.getX(), camino.getY(), '.');
                     numPuntos++;
                     camino = camino.getPadre();
@@ -40,9 +40,9 @@ public class BusquedaAnchura {
                 System.out.println("Numero de puntos pintados: " + numPuntos);
                 return;
             }
-            colaCerrada.add(actual);
+            colaCerrada.add(actual); // Añadimos el nodo a la lista de explorados
 
-            HashMap<Integer, Character> map = percepcion.percibir(actual.getX(), actual.getY());
+            HashMap<Integer, Character> map = percepcion.percibir(actual.getX(), actual.getY()); //Generamos hash map para percibir el entorno
 
             for (Integer key : map.keySet()) {
                 int x = actual.getX();
@@ -57,13 +57,14 @@ public class BusquedaAnchura {
                 if (map.get(key) != '#') {  // Verificar que no sea pared
                     Nodo hijo = new Nodo(actual, x, y, map.get(key));
                     if(!colaCerrada.contains(hijo) && !colaAbierta.contains(hijo)) {
-                        colaAbierta.add(hijo);
+                        colaAbierta.add(hijo); //Insertar hijp
                         numNodosExpandidos++;
                     }
                 }
             }
         }
 
+        // Mensaje de derrota
         System.out.println("No se ha encontrado la solución");
         System.out.println("Numero de nodos expandidos: " + numNodosExpandidos);
 

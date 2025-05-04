@@ -10,15 +10,7 @@ public class NodoHeuristico{
     private int x, y;
     private char valor;
 
-
-    public NodoHeuristico(NodoHeuristico p, int x, int y, char valor) {
-        Padre = p;
-        this.x = x;
-        this.y = y;
-        this.valor = valor;
-        heuristica = 100000;
-        coste = 0;
-    }
+    // Constructor
     public NodoHeuristico(NodoHeuristico p, int x, int y, char valor, int coste) {
         Padre = p;
         this.x = x;
@@ -32,15 +24,20 @@ public class NodoHeuristico{
         //0 Distancia a manhattan
         //1 Distancia Euclidea
         switch (tipo) {
+            // Camino a Manhattan
             case 0:
                 heuristica = Math.abs(salida[0] - getX()) + Math.abs(salida[1] - getY());
                 break;
+           // Distancia euclidea
             case 1:
                 heuristica = (Math.sqrt(Math.pow(Math.abs(salida[0] - getX()),2) + Math.pow(Math.abs(salida[1] - getY()),2)));
                 break;
+            // Camino a Manhattan + numObstaculos
             case 2:
                 HashMap <Integer, Character> mapa = new HashMap();
                 Laberinto lab = new Laberinto(labe.getLaberintoChar());
+
+
                 for(int i = 0; i < lab.getAlto(); i++){
                     for(int j = 0; j < lab.getAncho(); j++){
                         if(i == 0 || j == 0 || i == lab.getAlto() - 1 || j == lab.getAncho() - 1 ){
@@ -57,8 +54,15 @@ public class NodoHeuristico{
                         numObstaculos++;
                     }
                 }
-                heuristica =  (salida[0] - getX()) + (salida[1] - getY()) + numObstaculos;
+
+                if((x == 1 && y == 1) || (x == lab.getAlto() - 2 && y == 1) || (x == 1 && y == lab.getAncho() - 2) || (x == lab.getAlto() - 2 && y == lab.getAncho() - 2) ) {
+                    numObstaculos -= 2;
+                } else if (x == lab.getAlto() - 2 || y == lab.getAncho() - 2 || x == 1 || y == 1) {
+                    numObstaculos--;
+                }
+                heuristica =  Math.abs(salida[0] - getX()) + Math.abs(salida[1] - getY()) + numObstaculos;
                 break;
+            // Manhattan + Euclidea
             case 3:
                 heuristica = (Math.sqrt(Math.pow(salida[0] - getX(),2) + Math.pow(salida[1] - getY(),2))) + (salida[0] - getX()) + (salida[1] - getY());
                 break;
@@ -93,6 +97,7 @@ public class NodoHeuristico{
         this.coste = coste;
     }
 
+    // Dos nodos se consideran iguales si tienen el mismo valor de x e y
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

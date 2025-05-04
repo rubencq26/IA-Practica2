@@ -1,15 +1,15 @@
 import java.util.*;
 
 public class IDAstar {
-    private Stack<NodoHeuristico> abiertos;
-    private ArrayList<NodoHeuristico> cerrados;
+    private Stack<NodoHeuristico> abiertos; // Pila abierta
+    private ArrayList<NodoHeuristico> cerrados; // Cola cerrada
     private Laberinto lab;
     private int numNodosExpandidos;
     private int numPuntosPintados;
     private Percepcion percepcion;
     private int [] salida;
-    private double prof;
-    private double sigProf;
+    private double heuristica;
+    private double sigHeuristica;
 
     public IDAstar(Laberinto lab){
 
@@ -22,19 +22,20 @@ public class IDAstar {
     }
 
     public void resolverLaberinto(int heur, boolean activo, int limite) {
-        NodoHeuristico nodoInicial = new NodoHeuristico(null, 1, 1, 'E', 0);
+        NodoHeuristico nodoInicial = new NodoHeuristico(null, 1, 1, 'E', 0); // Estado Inicial
         nodoInicial.generarHeuristica(heur, salida, lab, activo);
-        prof = nodoInicial.getHeuristica();
+        heuristica = nodoInicial.getHeuristica();
 
-        while (prof < limite) {
+        // comprobamos que la heuristica no ha llegado al limite
+        while (heuristica < limite) {
             abiertos = new Stack<>();
             cerrados = new ArrayList<>();
-            sigProf = Double.MAX_VALUE;
+            sigHeuristica = Double.MAX_VALUE;
 
-            abiertos.push(nodoInicial);
+            abiertos.push(nodoInicial); // Insertamos en la pìla  el nodo Inicial
 
             while (!abiertos.isEmpty()) {
-                NodoHeuristico actual = abiertos.pop();
+                NodoHeuristico actual = abiertos.pop(); // Extraemos de la cola el nodo actual
                 cerrados.add(actual);
 
                 if (actual.getValor() == 'S') {
@@ -57,19 +58,20 @@ public class IDAstar {
                     int y = actual.getY();
 
                     switch (key) {
-                        case 0 -> y--;
-                        case 1 -> x--;
-                        case 2 -> y++;
-                        case 3 -> x++;
+                        case 0 -> y--; // Izquierda
+                        case 1 -> x--; // Arriba
+                        case 2 -> y++; // Derecha
+                        case 3 -> x++; // Abajo
                     }
 
+                    // Verificar si ha pared
                     if (map.get(key) != '#') {
                         NodoHeuristico hijo = new NodoHeuristico(actual, x, y, map.get(key), actual.getCoste() + 1);
                         hijo.generarHeuristica(heur, salida, lab, activo);
                         double f = hijo.getCoste() + hijo.getHeuristica();
 
-                        if (f > prof) {
-                            sigProf = Math.min(sigProf, f);
+                        if (f > heuristica) {
+                            sigHeuristica = Math.min(heuristica, f);
                         } else if (!cerrados.contains(hijo) && !abiertos.contains(hijo)) {
                             abiertos.push(hijo);
                             numNodosExpandidos++;
@@ -79,7 +81,7 @@ public class IDAstar {
             }
 
             // Nueva iteración con mayor profundidad
-            prof = sigProf;
+            heuristica = sigHeuristica;
         }
 
         System.out.println("No se ha encontrado la solucion ");

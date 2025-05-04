@@ -10,6 +10,7 @@ public class ProfundidadIterativa {
     private int numNodosExpandidos;
     private int numPuntos;
 
+    // Constructor
     public ProfundidadIterativa(Laberinto lab) {
         this.lab = new Laberinto(lab.getLaberintoChar());
         percepcion = new Percepcion(lab);
@@ -17,6 +18,7 @@ public class ProfundidadIterativa {
         numPuntos = 0;
     }
 
+    // Metodo para resolver el laberinto
     public void resolverLaberinto(){
         int limite = lab.getAlto() * lab.getAlto();
 
@@ -32,16 +34,17 @@ public class ProfundidadIterativa {
 
     }
 
+    // Metodo para iterar segun un limite
     public boolean resolverConLimite(int Limite) {
         Nodo nodoInicial = new Nodo(null, 1, 1, 'E');
-        abierto = new Stack<>();
-        cerrado = new ArrayList<>();
+        abierto = new Stack<>(); // Pila abierta
+        cerrado = new ArrayList<>(); // Lista cerrada
         abierto.push(nodoInicial);
 
         while (!abierto.isEmpty()) {
-            Nodo actual = abierto.pop();
-            numNodosExpandidos++;
+            Nodo actual = abierto.pop(); // Extraer nodo actual de la pila
 
+            // Condicion de victoria
             if (actual.getValor() == 'S') {
                 Nodo camino = actual.getPadre();
                 while (camino != null && camino.getValor() != 'E') {
@@ -78,6 +81,7 @@ public class ProfundidadIterativa {
                     if(hijo.getIteracion() < Limite) {
                         if (!cerrado.contains(hijo) && !abierto.contains(hijo)) {
                             abierto.push(hijo);
+                            numNodosExpandidos++;
                         }
                     }
                 }

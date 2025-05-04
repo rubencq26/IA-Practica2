@@ -7,6 +7,7 @@ public class Nodo {
     private char valor;
     private int iteracion;
 
+    //Constructor
     public Nodo(Nodo p, int x, int y, char valor) {
         Padre = p;
         Hijos = new ArrayList<>();
@@ -83,7 +84,7 @@ public class Nodo {
         return posicion;
     }
 
-
+    // Se consideran dos nodos iguales si estos tienen los mismos valores para x e y
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
