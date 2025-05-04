@@ -116,7 +116,7 @@ public class Main {
                 }
             }while (opc2 != 9);
 
-        }while(opc1 == 4);
+        }while(opc1 != 4);
 
 
 
@@ -156,7 +156,7 @@ public class Main {
     }
 
     public static boolean menu4(){
-        System.out.println("¿Desea activar la opcion que el coste a la derecha valga 2 y hacia abajo 3? (1.Si  - 2. No ");
+        System.out.println("¿Desea activar la opcion que el coste a la derecha valga 2 y hacia abajo 3? (1.Si  - 2. No) ");
         Scanner scanner = new Scanner(System.in);
         int opc1 = scanner.nextInt();
         boolean activo = false;

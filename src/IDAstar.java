@@ -12,7 +12,6 @@ public class IDAstar {
     private double sigHeuristica;
 
     public IDAstar(Laberinto lab){
-
         cerrados = new ArrayList<>();
         this.lab = new Laberinto(lab.getLaberintoChar());
         numNodosExpandidos = 0;
@@ -26,16 +25,16 @@ public class IDAstar {
         nodoInicial.generarHeuristica(heur, salida, lab, activo);
         heuristica = nodoInicial.getHeuristica();
 
-        // comprobamos que la heuristica no ha llegado al limite
-        while (heuristica < limite) {
+        // El bucle principal de IDA* basado en la heurística
+        while (heuristica <= limite) {
             abiertos = new Stack<>();
             cerrados = new ArrayList<>();
             sigHeuristica = Double.MAX_VALUE;
 
-            abiertos.push(nodoInicial); // Insertamos en la pìla  el nodo Inicial
+            abiertos.push(nodoInicial); // Insertamos en la pila el nodo Inicial
 
             while (!abiertos.isEmpty()) {
-                NodoHeuristico actual = abiertos.pop(); // Extraemos de la cola el nodo actual
+                NodoHeuristico actual = abiertos.pop(); // Extraemos de la pila el nodo actual
                 cerrados.add(actual);
 
                 if (actual.getValor() == 'S') {
@@ -52,6 +51,7 @@ public class IDAstar {
                     return;
                 }
 
+                // Verificar los movimientos posibles
                 HashMap<Integer, Character> map = percepcion.percibir(actual.getX(), actual.getY());
                 for (Integer key : map.keySet()) {
                     int x = actual.getX();
@@ -64,14 +64,17 @@ public class IDAstar {
                         case 3 -> x++; // Abajo
                     }
 
-                    // Verificar si ha pared
+                    // Verificar si no es una pared
                     if (map.get(key) != '#') {
                         NodoHeuristico hijo = new NodoHeuristico(actual, x, y, map.get(key), actual.getCoste() + 1);
                         hijo.generarHeuristica(heur, salida, lab, activo);
+
+                        // Calcular f = coste + heurística
                         double f = hijo.getCoste() + hijo.getHeuristica();
 
+                        // Si f es mayor que la heurística actual, actualiza el límite
                         if (f > heuristica) {
-                            sigHeuristica = Math.min(heuristica, f);
+                            sigHeuristica = Math.min(sigHeuristica, f);
                         } else if (!cerrados.contains(hijo) && !abiertos.contains(hijo)) {
                             abiertos.push(hijo);
                             numNodosExpandidos++;
@@ -80,16 +83,11 @@ public class IDAstar {
                 }
             }
 
-            // Nueva iteración con mayor profundidad
+            // Nueva iteración con mayor heurística
             heuristica = sigHeuristica;
         }
 
-        System.out.println("No se ha encontrado la solucion ");
+        System.out.println("No se ha encontrado la solución ");
         System.out.println("Num nodos expandidos: " + numNodosExpandidos);
     }
-
-
-
 }
-
-
