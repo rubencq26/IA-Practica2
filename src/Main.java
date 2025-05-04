@@ -7,6 +7,7 @@ public class Main {
         int opc1, opc2, opc3;
         boolean activo = false;
         int limite;
+        long inicio, fin;
         Scanner scanner = new Scanner(System.in);
         Laberinto laberinto = new Laberinto();
         do{
@@ -61,11 +62,17 @@ public class Main {
                 switch(opc2){
                     case 1:
                         BusquedaAnchura ba = new BusquedaAnchura(laberinto);
+                        inicio = System.nanoTime();
                         ba.resolverLaberinto();
+                        fin = System.nanoTime();
+                        System.out.println("Tiempo empleado: " + (fin-inicio)/1000+ " µs");
                         break;
                     case 2:
                         BusquedaProfundidad bp = new BusquedaProfundidad(laberinto);
+                        inicio = System.nanoTime();
                         bp.resolverLaberinto();
+                        fin = System.nanoTime();
+                        System.out.println("Tiempo empleado: " + (fin-inicio)/1000+ " µs");
                         break;
                     case 3:
                         GreedyBestFirstSearch gb = new GreedyBestFirstSearch(laberinto);
@@ -75,7 +82,10 @@ public class Main {
                             break;
                         }
                         activo = menu4();
+                        inicio = System.nanoTime();
                         gb.resolverLaberinto(opc3,activo);
+                        fin = System.nanoTime();
+                        System.out.println("Tiempo empleado: " + (fin-inicio)/1000+ " µs");
                         break;
                     case 4:
                         Astar a = new Astar(laberinto);
@@ -85,7 +95,10 @@ public class Main {
                             break;
                         }
                         activo = menu4();
+                        inicio = System.nanoTime();
                         a.resolverLaberinto(opc3,activo);
+                        fin = System.nanoTime();
+                        System.out.println("Tiempo empleado: " + (fin-inicio)/1000+ " µs");
                         break;
                     case 5:
                         IDAstar id = new IDAstar(laberinto);
@@ -97,21 +110,33 @@ public class Main {
                         activo = menu4();
                         System.out.println("Que limite de profundidad desea imponer: ");
                         limite = scanner.nextInt();
+                        inicio = System.nanoTime();
                         id.resolverLaberinto(opc3, activo, limite);
+                        fin = System.nanoTime();
+                        System.out.println("Tiempo empleado: " + (fin-inicio)/1000+ " µs");
                         break;
                     case 6:
                         BusquedaLimite bl = new BusquedaLimite(laberinto);
                         System.out.println("Que limite de profundidad desea imponer: ");
                         limite = scanner.nextInt();
+                        inicio = System.nanoTime();
                         bl.resolverLaberinto(limite);
+                        fin = System.nanoTime();
+                        System.out.println("Tiempo empleado: " + (fin-inicio)/1000+ " µs");
                         break;
                     case 7:
                         ProfundidadIterativa pr = new ProfundidadIterativa(laberinto);
+                        inicio = System.nanoTime();
                         pr.resolverLaberinto();
+                        fin = System.nanoTime();
+                        System.out.println("Tiempo empleado: " + (fin-inicio)/1000+ " µs");
                         break;
                     case 8:
                         BusquedaBidireccional bb = new BusquedaBidireccional(laberinto);
+                        inicio = System.nanoTime();
                         bb.resolverLaberinto();
+                        fin = System.nanoTime();
+                        System.out.println("Tiempo empleado: " + (fin-inicio)/1000+ " µs");
                         break;
                 }
             }while (opc2 != 9);
